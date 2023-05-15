@@ -3,38 +3,47 @@ import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { AuthContext } from "../Providers/AuthProvider";
 
-const Login = () => {
+const SignUp = () => {
   const [error, setError] = useState("");
-  const [show, setShow] = useState(false);
-  const { signInUser } = useContext(AuthContext);
-
+  const { createUser } = useContext(AuthContext);
   const navigate = useNavigate();
-  const handleLogIn = event => {
-    event.preventDefault();
 
+  const handleSignUp = event => {
+    event.preventDefault();
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
+    const confirm = form.confirm.value;
+    form.reset();
 
-    console.log(email, password);
+    // console.log(email, password, confirm);
     setError("");
-    signInUser(email, password)
+    if (password !== confirm) {
+      setError("Did not matched password");
+      return;
+    } else if (password < 6) {
+      setError("Password must be 6 or grater");
+    }
+
+    createUser(email, password)
       .then(result => {
         const loggedUser = result.user;
         console.log(loggedUser);
         navigate("/");
       })
       .catch(err => {
-        console.log(err.message);
+        const errorCode = err.code;
+        const errorMessage = err.message;
+        console.log(errorCode, errorMessage);
       });
   };
 
   return (
-    <form onSubmit={handleLogIn}>
+    <form onSubmit={handleSignUp}>
       <div className="hero">
         <div className="hero-content flex-col">
           <div className="text-center">
-            <h1 className="text-5xl font-bold w-96">Login now!</h1>
+            <h1 className="text-5xl font-bold w-96">Sign Up</h1>
           </div>
           <div className="card flex-shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
             <div className="card-body">
@@ -54,33 +63,36 @@ const Login = () => {
                   <span className="label-text">Password</span>
                 </label>
                 <input
-                  type={show ? "text" : "password"}
+                  type="password"
                   name="password"
                   placeholder="Password"
                   className="input input-bordered"
                 />
-
-                <p onClick={() => setShow(!show)}>
-                  {show ? (
-                    <span>Show password</span>
-                  ) : (
-                    <span>Hide password</span>
-                  )}
-                </p>
               </div>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">Confirm Password</span>
+                </label>
+                <input
+                  type="password"
+                  name="confirm"
+                  placeholder="Confirm Password"
+                  className="input input-bordered"
+                />
+              </div>
+              <p className="text-warning">{error}</p>
               <div className="form-control mt-6">
                 <button className="btn bg-[#FF9900] border-none hover:bg-[#ca8a04]">
-                  Login
+                  Sign Up
                 </button>
               </div>
-              <p>{error}</p>
               <label className="labe label-text-alt mt-2 ml-14 text-md">
-                <span className="">New to Ema-john? </span>
+                <span className="">Already have an account? </span>
                 <Link
-                  to="/signUp"
+                  to="/login"
                   className=" text-center text-[#FF9900] link link-hover"
                 >
-                  Create New Account
+                  Login
                 </Link>
               </label>
               <div className="flex flex-col w-full border-opacity-50">
@@ -100,4 +112,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

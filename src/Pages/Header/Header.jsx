@@ -1,8 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from "../../images/logo.png";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../Providers/AuthProvider";
 
 const Header = () => {
+  const { user, logOut } = useContext(AuthContext);
+  // console.log(user?.email);
+
+  const handleLogOut = () => {
+    logOut()
+      .then(result => {
+        // Sign-out successful.
+      })
+      .catch(error => {
+        console.log(error.message);
+      });
+  };
   const menuBar = (
     <>
       <li>
@@ -15,7 +28,18 @@ const Header = () => {
         <Link to="/inventory">Inventory</Link>
       </li>
       <li>
-        <Link to="/login">Login</Link>{" "}
+        <Link to="/login">Login</Link>
+      </li>
+      <li>
+        <Link to="/signUp">SignUp</Link>
+      </li>
+      <li>
+        {user && (
+          <span>
+            Welcome{user?.email}
+            <button onClick={handleLogOut}>SignOut</button>
+          </span>
+        )}
       </li>
     </>
   );

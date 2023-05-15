@@ -1,7 +1,8 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { ImArrowRight } from "react-icons/im";
+import { Link, useNavigate } from "react-router-dom";
 
-const Cart = ({ cart }) => {
+const Cart = ({ cart, handleClearCart, children }) => {
   const navigate = useNavigate();
   let total = 0;
   let quantity = 0;
@@ -18,10 +19,6 @@ const Cart = ({ cart }) => {
   const tax = (total + totalShipping / 100) * 0.15;
   const grandTotal = total + totalShipping + tax;
 
-  const checkout = () => {
-    navigate("/orders");
-  };
-
   return (
     <div className="bg-red-600 text-white p-4 rounded-xl">
       <h2 className="font-bold text-2xl mb-2">Checkout Summary</h2>
@@ -32,7 +29,13 @@ const Cart = ({ cart }) => {
       <h6 className="font-bold text-sm mt-2">
         Payable Total {grandTotal.toFixed(2)}
       </h6>
-      <button onClick={checkout}>checkout</button>
+      <button
+        className="btn btn-warning w-full mt-3 font-bold"
+        onClick={handleClearCart}
+      >
+        Clear Cart
+      </button>
+      {children}
     </div>
   );
 };
